@@ -1,3 +1,4 @@
+import { Task } from './../../model/task';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 
 @Component({
@@ -9,17 +10,17 @@ export class TodoInputAddItensComponent implements OnInit {
 
   @Output() public emitItemTaskList = new EventEmitter();
 
-  public taskDescription: string = '';
+  public task: Task = {id: null, description: '', checked: false};
   constructor() { }
 
   ngOnInit(): void {
   }
 
   public submitItemTaskList(){
-    this.taskDescription = this.taskDescription.trim();
-    if(this.taskDescription){
-      this.emitItemTaskList.emit(this.taskDescription);
-      this.taskDescription = ''; 
+    this.task.description = this.task.description.trim();
+    if(this.task.description){
+      this.emitItemTaskList.emit(this.task);
+      this.task.description = ''; 
     }
   }
 

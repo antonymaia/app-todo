@@ -21,27 +21,36 @@ export class TodoListComponent implements DoCheck, OnInit {
     this.setLocalStorage();
   }
 
-  public setEmitTaskList(event: string) {
-
-    this.taskList.push({ id:null, description: event, checked: false });
+  public setEmitTaskList(task: Task) {
+    this.taskService.createTask(task).subscribe(
+      (data) => {
+        this.getTasks();
+      },
+      (error) => {console.log(error)}
+    );
   }
 
-  public deleteItemTaskList(event: number) {
-    this.taskList.splice(event, 1);
+  public deleteItemTaskList(id: number) {
+    this.taskService.deleteTask(id).subscribe(
+      (data) => { this.getTasks() },
+      (error) => { console.log(error) }
+    )
   }
 
   public deleteAllTaskList() {
     const confirm = window.confirm('Você deseja realmente deletar tudo?');
     if (confirm) {
-      this.taskList = [];
+      this.taskService.deleteAllTasks().subscribe(
+        (data) => { this.getTasks() }
+      )
     }
   }
 
-  public validationInput(event: string, index: number) {
-    if (!event.length) {
+  public validationInput(task: Task) {
+    if (!task.description.length) {
       const confirm = window.confirm('Descrição da Task está vazia, deseja deletar?');
       if (confirm) {
-        this.deleteItemTaskList(index);
+        this.deleteItemTaskList(task.id);
       }
     }
   }
@@ -49,11 +58,10 @@ export class TodoListComponent implements DoCheck, OnInit {
   public setLocalStorage(){
     if(this.taskList){
       this.taskList.sort((first, last) => Number(first.checked) - Number(last.checked));
-      localStorage.setItem('list', JSON.stringify(this.taskList));
     }
   }
 
-  getTasks(): void{
+  public getTasks(): void{
     this.taskService.getTasks().subscribe(
       (data) => {
         this.taskList = data;
